@@ -9,32 +9,29 @@ def table_creation():
     port = "5432"
     conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
     cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS car_type (
-            ID_Type_car SERIAL PRIMARY KEY
-        )
-    """)
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS cars (
             id_car SERIAL PRIMARY KEY,
-            id_type_car INTEGER,
-            model VARCHAR(25),
-            car_status VARCHAR(20),
-            FOREIGN KEY (id_type_car) REFERENCES car_type(ID_Type_car)
+            brand VARCHAR(50),
+            model VARCHAR(50),
+            car_seats INTEGER,
+            car_status VARCHAR(50),
+            dissability_readyness BOOLEAN
         )
     """)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS drivers (
             id_driver SERIAL PRIMARY KEY,
-            name VARCHAR(20),
-            surname VARCHAR(20),
-            driving_license VARCHAR(20)
+            name VARCHAR(50),
+            surname VARCHAR(50),
+            driver_license INTEGER
             )
     """)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS routes (
-            id_route SERIAL PRIMARY KEY,
-            alias VARCHAR(25)
+            id_route INTEGER PRIMARY KEY,
+            alias VARCHAR(50)
         )
     """)
     cur.execute("""
@@ -62,9 +59,9 @@ def table_creation():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS customers (
             id_customer SERIAL PRIMARY KEY,
-            name VARCHAR(20),
-            surname VARCHAR(20),
-            email VARCHAR(20)
+            name VARCHAR(50),
+            surname VARCHAR(50),
+            email VARCHAR(50)
         )
     """)
     cur.execute("""
@@ -76,7 +73,7 @@ def table_creation():
             drop_point POINT,
             price FLOAT,
             passengers INT,
-            request_status VARCHAR(20),
+            request_status VARCHAR(50),
             request_time TIMESTAMP,
             FOREIGN KEY (id_customer) REFERENCES customers(id_customer)
         )
@@ -96,7 +93,7 @@ def table_creation():
             price FLOAT,
             passengers INT,
             ride_time TIMESTAMP,
-            status VARCHAR(20),
+            status VARCHAR(50),
             current_position POINT,
             FOREIGN KEY (id_service_offer) REFERENCES active_vehicles(id_service_offer),
             FOREIGN KEY (id_request) REFERENCES ride_requests (id_request),
@@ -111,5 +108,6 @@ def table_creation():
     conn.commit()
     cur.close()
     conn.close()
+    print ("Todas las tablas se han creado satisfactoriamente")
 
 table_creation()
