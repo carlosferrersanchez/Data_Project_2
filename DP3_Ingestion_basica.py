@@ -1,4 +1,5 @@
 import psycopg2
+import openpyxl
 import pandas as pd
 from faker import Faker
 from DP2_Creacion_de_clases import car, driver, customer
@@ -24,6 +25,7 @@ def insert_cars_data():
     cur.close()
     conn.close()
     print ('Se han cargado datos de coches con éxito')
+
 def insert_drivers_data():
     conn = psycopg2.connect(
         dbname = "DB_DP2",
@@ -37,9 +39,9 @@ def insert_drivers_data():
     for _ in range(num_records_to_generate):
         driver_instance = driver()
         cur.execute("""
-            INSERT INTO drivers (name, surname, driver_license)
-            VALUES (%s, %s, %s)
-        """, (driver_instance.name, driver_instance.surname, driver_instance.driver_license))
+            INSERT INTO drivers (name, surname, driver_license, driver_status)
+            VALUES (%s, %s, %s, %s)
+        """, (driver_instance.name, driver_instance.surname, driver_instance.driver_license, driver_instance.status))
     conn.commit()
     cur.close()
     conn.close()

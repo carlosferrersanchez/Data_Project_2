@@ -25,7 +25,8 @@ def table_creation():
             id_driver SERIAL PRIMARY KEY,
             name VARCHAR(50),
             surname VARCHAR(50),
-            driver_license INTEGER
+            driver_license INTEGER,
+            driver_status VARCHAR(50)
             )
     """)
     cur.execute("""
