@@ -31,6 +31,9 @@ class driver:
         self.name = driver.fake.first_name()
         self.surname = driver.fake.last_name()
         self.driver_license = driver.fake.unique.random_int(min=10000000, max=99999999)
+        driver_status_types = ['Active','Inactive'] 
+        probs_status = [0.0, 1]
+        self.status = np.random.choice(driver_status_types,p=probs_status)  
 '''     
 #PRUEBA DE QUE FUNCIONA:
 prueba_conductores = [driver() for _ in range(10)]
