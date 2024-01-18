@@ -1,6 +1,7 @@
 psycopg2
 pandas
-json
 numpy
 faker
 openpyxl
+pyspark
+flask
