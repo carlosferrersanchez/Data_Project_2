@@ -1,22 +1,40 @@
 import random
 import numpy as np
+import psycopg2
 from faker import Faker
 from ZZ_Auxiliar import car_types_list
 
 class car:
     car_types_list = car_types_list
+    used_driver_ids = []
     def __init__(self):
+        self.driver_id = self.assign_random_id_driver()
         self.brand = random.choice(list(car.car_types_list.keys()))
         self.model = random.choice(list(car.car_types_list[self.brand].keys()))
-        self.seats = car.car_types_list[self.brand][self.model]
- 
-        car_status_types = ['Active','Inactive','Maintenance'] 
-        probs_status = [0.0, 0.90, 0.10]
-        self.status = np.random.choice(car_status_types,p=probs_status)           
-        
+        self.seats = car.car_types_list[self.brand][self.model]        
         adapted_to_dissability = ['Yes', 'No']
         probs_adapted_to_dissability = [0.20, 0.80]        
         self.dissability_readyness = np.random.choice(adapted_to_dissability,p=probs_adapted_to_dissability)  
+    def assign_random_id_driver(self):
+        try:
+            conn = psycopg2.connect(
+                dbname="DB_DP2",
+                user="dp2",
+                password="dp2",
+                host="localhost",
+                port="5432"
+            )
+            cur = conn.cursor()
+            cur.execute("SELECT id_driver FROM drivers")
+            available_driver_ids = [row[0] for row in cur.fetchall()]
+            unused_driver_ids = [driver_id for driver_id in available_driver_ids if driver_id not in car.used_driver_ids]
+            if unused_driver_ids:
+                driver_id = random.choice(unused_driver_ids)
+                car.used_driver_ids.append(driver_id)
+                return driver_id
+        finally:
+            cur.close()
+            conn.close()
 
 '''       
 #PRUEBA DE QUE FUNCIONA:
