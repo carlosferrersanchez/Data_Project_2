@@ -53,15 +53,38 @@
         })
       )
 
-      var directions = new MapboxDirections({
-        accessToken: mapboxgl.accessToken
-      })
+      const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        unit: 'metric',
+        profile: 'mapbox/cycling',
+        alternatives: true,
+        controls: {
+          inputs: false,
+          instructions: true
+        }
+      });
 
-      map.addControl(directions, "top-left")
+      map.addControl(directions, 'top-left');
     }
+  </script>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.js"></script>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.2.0/mapbox-gl-directions.css" type="text/css">
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoicGF1bHZsYyIsImEiOiJjbHJudDJybzAxZmxtMmtrMGQ5d29jNG91In0.VJX0fw8L8sH12CrEHukY4A';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [-79.4512, 43.6568],
+      zoom: 13
+    });
+
+    map.addControl(
+      new MapboxDirections({
+        accessToken: mapboxgl.accessToken
+      }),
+      'top-left'
+    );
   </script>
 </body>
 </html>
-
-
-
