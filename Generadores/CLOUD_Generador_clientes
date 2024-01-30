@@ -3,14 +3,15 @@ from datetime import datetime
 from google.cloud import pubsub_v1
 import json
 import time
+from getpass import getpass
 
 #PRIMERO INTRODUCIR ESTO EN TERMINAL PARA AUTENTICARTE: gcloud auth application-default login
-
+password = getpass("Introduce la contraseña: ")
 def get_inactive_customer():
     conn = psycopg2.connect(
         dbname = "DP2",
         user = "postgres",
-        password = "1234",
+        password = password,
         host = "34.38.87.73",
         port = "5432"
     )
