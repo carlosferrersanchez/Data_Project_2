@@ -11,7 +11,10 @@ import logging
 """ Helper function to parse Pub/Sub messages """
 def parse_pubsub_message(message):
     """ Parses Pub/Sub message. """
-    return json.loads(message.data.decode('utf-8'))
+    data = json.loads(message.data.decode('utf-8'))
+    id_driver = data.get('id:driver')
+    id_route = data.get('id_route')
+    return {"id": id_driver, "id_route": id_route}
 
 """ Helper function to define BigQuery table schema """
 def get_table_schema():
