@@ -19,7 +19,7 @@ def parse_pubsub_message(message):
 
     logging.info(test)
     return test
-
+#Dofn de transformación
 def run(argv=None):
     """ Main entry point; defines and runs the dataflow pipeline. """
     parser = argparse.ArgumentParser()
