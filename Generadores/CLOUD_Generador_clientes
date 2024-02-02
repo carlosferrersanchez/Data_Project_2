@@ -5,7 +5,7 @@ import json
 import time
 from getpass import getpass
 
-#PRIMERO INTRODUCIR ESTO EN TERMINAL PARA AUTENTICARTE: gcloud auth application-default login
+# PRIMERO INTRODUCIR ESTO EN TERMINAL PARA AUTENTICARTE: gcloud auth application-default login
 password = getpass("Introduce la contraseña: ")
 def get_inactive_customer():
     conn = psycopg2.connect(
@@ -49,7 +49,7 @@ def get_inactive_customer():
         """, (id_route[0],))
         pickup_checkpoint = cur.fetchone()
         if pickup_checkpoint:
-            pickup_location = [pickup_checkpoint[0],pickup_checkpoint[1]]
+            pickup_location = {'x': pickup_checkpoint[0], 'y': pickup_checkpoint[1]}
 
     destination_location = None
     if id_route:
@@ -62,12 +62,12 @@ def get_inactive_customer():
         """, (id_route[0],))
         destination_checkpoint = cur.fetchone()
         if destination_checkpoint:
-            destination_location = [destination_checkpoint[0],destination_checkpoint[1]]
+            destination_location = {'x': destination_checkpoint[0], 'y': destination_checkpoint[1]}
 
     cur.close()
     conn.close()
     
-    return id_customer, id_route, pickup_location, destination_location
+    return id_route, pickup_location, destination_location
 
 def publish_message(project_id, topic_id, message):
     """Publishes a message to a Pub/Sub topic."""
@@ -79,19 +79,19 @@ def publish_message(project_id, topic_id, message):
     try:
         publish_future = publisher.publish(topic_path, data)
         publish_future.result()
-        print(f"New customer activated: {message}")
+        print(f"New vehicle activated: {message}")
     except Exception as e:
         print(f"An error occurred: {e}")
         raise
 
-def send_new_active_customer():
+def send_new_active_vehicle():
     while True:
-        id_customer, id_route, pickup_location, destination_location = get_inactive_customer()
+        id_route, pickup_location, destination_location = get_inactive_customer()
 
         message = {
-            'id_customer': id_customer[0] if id_customer else None,
+            'id_customer': 34,  # ID del conductor estático
             'id_route': id_route[0] if id_route else None,
-            'pickup_location_X': pickup_location,
+            'pickup_location': pickup_location,
             'destination_location': destination_location
         }
         message_json = json.dumps(message)
@@ -100,4 +100,4 @@ def send_new_active_customer():
 
         time.sleep(5)
 
-send_new_active_customer()
+send_new_active_vehicle()
