@@ -48,11 +48,12 @@ def run(argv=None):
     
     # Define el esquema de la tabla en formato JSON
     input_schema = {
-        "fields": [
-            {"mode": "NULLABLE", "name": "id_driver", "type": "INTEGER"},
-            {"mode": "NULLABLE", "name": "id_route", "type": "INTEGER"}
-        ]
+        {"mode": "NULLABLE", "name": "id_driver", "type": "INTEGER"},
+        {"mode": "NULLABLE", "name": "id_route", "type": "INTEGER"},
+        {"mode": "NULLABLE", "name": "pickup_location", "type":"STRING"},
+        {"mode": "NULLABLE", "name": "destination_location", "type":"STRING"}
     }
+    
     
     # Parsea el esquema usando bigquery_tools.parse_table_schema_from_json
     import os  # Importa el módulo os
