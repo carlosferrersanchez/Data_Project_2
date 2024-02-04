@@ -1,3 +1,4 @@
 streamlit==1.20.0
 pydeck==0.7.1
 protobuf==3.19.5
+streamlit_extras.app_logo
