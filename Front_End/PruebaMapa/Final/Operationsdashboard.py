@@ -3,13 +3,15 @@ import pandas as pd
 import psycopg2
 import streamlit_shadcn_ui as ui
 import time
+from getpass import getpass
+password = getpass('Enter database password')
 
 class BaseDeDatos:
     # Credenciales de la base de datos como atributos estáticos
     HOST = '34.38.87.73'
     DATABASE = 'DP2'
     USER = 'postgres'
-    PASSWORD = '1234'
+    PASSWORD = password
     PORT = '5432'
 
     @staticmethod
@@ -88,7 +90,7 @@ def cargar_datos_y_mostrar(activos=True):
             consulta_clientes_activos = "SELECT COUNT(*) FROM customers WHERE customer_status = 'Active'"
             total_clientes_activos = BaseDeDatos.consultar(consulta_clientes_activos)[0][0]
             if total_clientes_activos is not None:
-                ui.metric_card(title="Clientes Activos", content=total_clientes_activos, description="Clientes usando la aplicación", key="card4_clientes_activos")
+                ui.metric_card(title="Clientes Esperando", content=total_clientes_activos, description="Clientes esperando a ser recogidos", key="card4_clientes_activos")
             else:
                 st.warning("No hay datos de clientes activos disponibles en este momento.")
 
@@ -107,12 +109,12 @@ def cargar_datos_y_mostrar(activos=True):
             consulta_conductores_activos = "SELECT COUNT(*) FROM drivers WHERE driver_status = 'Active'"
             total_conductores_activos = BaseDeDatos.consultar(consulta_conductores_activos)[0][0]
             if total_conductores_activos is not None:
-                ui.metric_card(title="Conductores Activos", content=total_conductores_activos, description="Conductores listos para recoger a clientes", key="card6")
+                ui.metric_card(title="Conductores Activos", content=total_conductores_activos, description="Conductores en rutas activas", key="card6")
             else:
                 st.warning("No hay datos de conductores activos disponibles en este momento.")
 
         # Interruptor para alternar entre viajes activos y todos los viajes
-        show_active_rides = st.checkbox('Active Rides', True)
+        show_active_rides = st.checkbox('Active Vehicles', True)
 
         # Función para cargar los datos de los viajes
         def cargar_datos_rides(activos=True):
@@ -145,7 +147,7 @@ def cargar_datos_y_mostrar(activos=True):
         SELECT rr.id_request, c.name, c.surname
         FROM ride_requests rr
         JOIN customers c ON rr.id_customer = c.id_customer
-        WHERE rr.request_status = 'Active' AND c.customer_status = 'Active'
+        WHERE rr.request_status = 'Waiting' AND c.customer_status = 'Active'
         """
 
         # Ejecutar la consulta SQL y obtener los datos en un DataFrame
