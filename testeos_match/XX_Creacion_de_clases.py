@@ -64,7 +64,7 @@ class BaseDeDatos:
             host='34.38.87.73',
             database='DP2',
             user='postgres',
-            password='1234',
+            password=password,
             port='5432'
         )
     def consultar(self, consulta_sql, parametros=None):
