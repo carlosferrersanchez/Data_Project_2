@@ -18,8 +18,9 @@ def haversine(lon1, lat1, lon2, lat2):
     return c * r * 1000  # Resultado en metros
 
 class FindMatchesAndGenerateMessages(beam.DoFn):
-    def __init__(self):
-        self.id_match_counter = 0  # Inicializa el contador a 0
+    def generate_unique_id(self):
+        # Genera un ID único de 4 caracteres alfanuméricos
+        return ''.join(random.choices(string.ascii_letters + string.digits, k=4))
 
     def process(self, element):
         # Asegúrate de que tanto 'clientes_activos' como 'vehiculos_activos' están presentes en el mensaje.
@@ -46,9 +47,8 @@ class FindMatchesAndGenerateMessages(beam.DoFn):
                    haversine(cliente_lon, cliente_lat, vehiculo_lon, vehiculo_lat) < 50 and \
                    vehiculo_activo['seats_available'] >= cliente_activo['passengers']:
                     
-                    # Incrementa el contador para obtener un nuevo valor de "id_match".
-                    self.id_match_counter += 1
-                    id_match = self.id_match_counter
+                    # Genera un nuevo valor de "id_match" único.
+                    id_match = self.generate_unique_id()
 
                     # Calcula los asientos restantes después de la asignación.
                     seats_remaining = vehiculo_activo['seats_available'] - cliente_activo['passengers']
