@@ -8,11 +8,11 @@ from getpass import getpass
 
 class BaseDeDatos:
     # Credenciales de la base de datos como atributos estáticos
-    HOST = xxxxx
-    DATABASE = xxxx
-    USER = xxxx
-    PASSWORD = xxxxx
-    PORT = xxxxx
+    HOST = '34.38.87.73'
+    DATABASE = 'DP2'
+    USER = 'postgres'
+    PASSWORD = getpass("Introduce la contraseña de la base de datos: ")
+    PORT = '5432'
 
     @staticmethod
     def conectar():
