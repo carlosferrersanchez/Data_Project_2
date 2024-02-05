@@ -1,14 +1,14 @@
 import psycopg2
 from getpass import getpass
-password = getpass('Enter database password')
+
 
 class BaseDeDatos:
     # Credenciales de la base de datos como atributos estáticos
-    HOST = '34.38.87.73'
+    HOST = 
     DATABASE = 'DP2'
     USER = 'postgres'
-    PASSWORD = password
-    PORT = '5432'
+    PASSWORD = 
+    PORT = 
 
     @staticmethod
     def conectar():

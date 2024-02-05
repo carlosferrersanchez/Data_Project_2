@@ -4,15 +4,15 @@ import psycopg2
 import streamlit_shadcn_ui as ui
 import time
 from getpass import getpass
-password = getpass('Enter database password')
+
 
 class BaseDeDatos:
     # Credenciales de la base de datos como atributos estáticos
-    HOST = '34.38.87.73'
+    HOST = 
     DATABASE = 'DP2'
-    USER = 'postgres'
-    PASSWORD = password
-    PORT = '5432'
+    USER = 
+    PASSWORD = 
+    PORT = 
 
     @staticmethod
     def conectar():
@@ -66,7 +66,7 @@ blue = "<style>div.stDivider.horizontal {border: 2px solid #04b194;}</style>"
 import streamlit as st
 
 # Logo en la barra lateral
-st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Front_End/PruebaMapa/Final/LOGO.png', use_column_width=True)
+st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Front_End/Pruebas/Final/LOGO.png', use_column_width=True)
 
 # Resto de tu aplicación Streamlit
 st.title('City Operations Dashboard')
