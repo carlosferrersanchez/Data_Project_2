@@ -43,27 +43,20 @@ custom_css = """
 body {
     margin: 0px;
 }
-
 [data-testid="stTheme"] {
     background-color: #f9f2f2 !important;
     font-family: serif !important;
 }
-
 [data-testid="stSidebar"] {
     background-color: #04b194 !important;
 }
-
 [data-testid="stBlockContainer"] {
     background-color: #e6e6e6 !important;
 }
 </style>
 """
 
-
-
 blue = "<style>div.stDivider.horizontal {border: 2px solid #04b194;}</style>"
-
-import streamlit as st
 
 # Logo en la barra lateral
 st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Front_End/Pruebas/Final/LOGO.png', use_column_width=True)
@@ -73,6 +66,27 @@ st.title('City Operations Dashboard')
 st.markdown(blue, unsafe_allow_html=True)  # Divider de color azul
 st.header('_OnlyRides_ is here: :blue[Valencia] :sunglasses:')
 
+
+# Función para contar la cantidad de vehículos con service_status "With Passengers"
+def contar_vehiculos():
+    consulta_sql_with_passengers = "SELECT COUNT(*) FROM active_vehicles WHERE service_status = 'With Passengers'"
+    
+    try:
+        with BaseDeDatos.conectar() as conexion:
+            count_with_passengers = BaseDeDatos.consultar(consulta_sql_with_passengers)[0][0]
+            return count_with_passengers
+    except Exception as e:
+        st.error(f'Error counting vehicles: {e}')
+        return None
+
+# Obtener la cantidad de vehículos con service_status "With Passengers"
+count_with_passengers = contar_vehiculos()
+
+# Mostrar la cantidad de vehículos con pasajeros
+if count_with_passengers is not None:
+    st.success(f'Vehículos con pasajeros abordo: {count_with_passengers}')
+else:
+    st.warning("Unable to retrieve vehicle information. Please try again later.")
 
 # Configurar el auto-refresh en el sidebar
 st.sidebar.title("Auto Refresh")
@@ -90,7 +104,7 @@ def cargar_datos_y_mostrar(activos=True):
             consulta_clientes_activos = "SELECT COUNT(*) FROM customers WHERE customer_status = 'Active'"
             total_clientes_activos = BaseDeDatos.consultar(consulta_clientes_activos)[0][0]
             if total_clientes_activos is not None:
-                ui.metric_card(title="Clientes Esperando", content=total_clientes_activos, description="Clientes esperando a ser recogidos", key="card4_clientes_activos")
+                ui.metric_card(title="Clientes Activos", content=total_clientes_activos, description="Clientes usando la aplicación", key="card4_clientes_activos")
             else:
                 st.warning("No hay datos de clientes activos disponibles en este momento.")
 
@@ -109,17 +123,20 @@ def cargar_datos_y_mostrar(activos=True):
             consulta_conductores_activos = "SELECT COUNT(*) FROM drivers WHERE driver_status = 'Active'"
             total_conductores_activos = BaseDeDatos.consultar(consulta_conductores_activos)[0][0]
             if total_conductores_activos is not None:
-                ui.metric_card(title="Conductores Activos", content=total_conductores_activos, description="Conductores en rutas activas", key="card6")
+                ui.metric_card(title="Vehículos Activos", content=total_conductores_activos, description="Vehiculos operativos recorriendo rutas", key="card6")
             else:
                 st.warning("No hay datos de conductores activos disponibles en este momento.")
-
+              
         # Interruptor para alternar entre viajes activos y todos los viajes
-        show_active_rides = st.checkbox('Active Vehicles', True)
-
+        show_active_rides = st.checkbox('Ver todos los vehiculos activos sin pasajeros', True)
+        
+        # Explicación del mapa
+        st.caption('Mapa de vehículos con pasajeros abordo')
+        
         # Función para cargar los datos de los viajes
         def cargar_datos_rides(activos=True):
             if activos:
-                consulta_sql = "SELECT id_driver, current_position FROM active_vehicles WHERE service_status IN ('Active', 'On route')"
+                consulta_sql = "SELECT id_driver, current_position FROM active_vehicles WHERE service_status IN ('With Passengers')"
             else:
                 # Consulta SQL para todos los viajes usando la columna correcta de la tabla rides
                 consulta_sql = "SELECT ride_current_position FROM rides"
@@ -147,7 +164,7 @@ def cargar_datos_y_mostrar(activos=True):
         SELECT rr.id_request, c.name, c.surname
         FROM ride_requests rr
         JOIN customers c ON rr.id_customer = c.id_customer
-        WHERE rr.request_status = 'Waiting' AND c.customer_status = 'Active'
+        WHERE rr.request_status = 'Active' AND c.customer_status = 'Active'
         """
 
         # Ejecutar la consulta SQL y obtener los datos en un DataFrame
@@ -173,14 +190,14 @@ def cargar_datos_y_mostrar(activos=True):
             st.write("No hay viajes para mostrar.")
 
         # Mostrar la cola de clientes que están esperando su viaje
-        st.header('Clientes en cola para su viaje:')
+        st.header('Clientes en cola esperando a su viaje:')
         if not df_clientes.empty:
             st.table(df_clientes)
         else:
             st.write("No hay clientes en cola en este momento.")
 
         # Mostrar conductores activos
-        st.header('Conductores Activos:')
+        st.header('Conductores en activo trabajando:')
         if not df_conductores_activos.empty:
             st.table(df_conductores_activos)
         else:
@@ -192,5 +209,4 @@ def cargar_datos_y_mostrar(activos=True):
             st.experimental_rerun()
 
 # Llamar a la función para cargar y mostrar los datos
-cargar_datos_y_mostrar(True)  
-
+cargar_datos_y_mostrar(True)  # Puedes ajustar esto según tus necesidades, por ejemplo, cargar los datos activos primero
