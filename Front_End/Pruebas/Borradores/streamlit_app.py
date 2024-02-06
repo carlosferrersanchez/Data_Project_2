@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 import time
+from streamlit_folium import folium_static
 from creacion_clase import BaseDeDatos
+
+
 
 #AJUSTAR MÁRGENES
 custom_css = """
