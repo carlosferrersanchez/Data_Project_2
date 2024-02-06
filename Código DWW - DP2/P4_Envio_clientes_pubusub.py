@@ -10,7 +10,7 @@ def enviar_clientes_activos(project_id, topic_id):
         consulta_sql = """
             SELECT id_request, pick_up_point, passengers, id_route
             FROM ride_requests
-            WHERE request_status != 'Matched'
+            WHERE request_status = 'Waiting'
         """
         registros = db.consultar(consulta_sql)
 

@@ -21,7 +21,7 @@ def enviar_datos_combinados(project_id, topic_id):
         consulta_clientes = """
             SELECT id_request, pick_up_point, passengers, id_route
             FROM ride_requests
-            WHERE request_status != 'Matched'
+            WHERE request_status = 'Waiting'
         """
         
         # Obtiene registros

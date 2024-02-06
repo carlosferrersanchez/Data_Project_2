@@ -62,17 +62,33 @@ def generate_customer_requests():
 
             total_distance = total_distance_result[0][0] if total_distance_result and total_distance_result[0][0] is not None else 0
             total_distance_km = total_distance / 1000
-            price = total_distance_km * 1.2
+            price = max(round(total_distance_km * 5, 2), 3.99) #No es tarifa real, pero ajustada a duración ruta para mejor similitud a realidad.
             probabilidades = [0.35, 0.35, 0.20, 0.10]
             passengers = int(np.random.choice([1, 2, 3, 4], p=probabilidades))
 
-            db.ejecutar("""
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            consulta_sql_insert_customer_request = """
                 INSERT INTO ride_requests (
                     id_customer, date, pick_up_point, drop_point, request_status, 
                     request_time_start, request_time_end, id_route, price, passengers, distance_covered, current_checkpoint
                 )
-                VALUES (%s, %s, %s, %s, 'Waiting', NOW(), NOW(), %s, %s, %s, %s, %s)
-            """, (id_customer, datetime.now(), pickup_location, destination_location, id_route, price, passengers, total_distance_km, pickup_checkpoint_number))
+                VALUES (%s, %s, %s, %s, 'Waiting', %s::timestamp, %s::timestamp, %s, %s, %s, %s, %s)
+            """
+            parametros_insert_customer_request = (
+                id_customer, 
+                datetime.now(),
+                pickup_location,
+                destination_location,
+                now_str,  
+                now_str,  
+                id_route,
+                price,
+                passengers,
+                total_distance_km,
+                pickup_checkpoint_number,
+            )
+            db.ejecutar(consulta_sql_insert_customer_request, parametros_insert_customer_request)
 
             print(f"Ride request created for customer {id_customer} with price: {price}, passengers: {passengers}, and current_checkpoint: {pickup_checkpoint_number}")
 
@@ -83,9 +99,8 @@ def generate_customer_requests():
             """, (id_customer,))
         else:
             print("Todos los clientes están activos")
-            db.cerrar()
 
-        time.sleep(5)
+        time.sleep(15)
 
 if __name__ == "__main__":
     generate_customer_requests()

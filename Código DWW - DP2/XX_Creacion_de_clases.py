@@ -7,7 +7,8 @@ from ZZ_Auxiliar import car_types_list
 class car:
     car_types_list = car_types_list
     used_driver_ids = []
-    def __init__(self):
+    def __init__(self,skip_driver_id_assignment=False):
+        self.assign_random_id_driver()
         self.driver_id = self.assign_random_id_driver()
         self.brand = random.choice(list(car.car_types_list.keys()))
         self.model = random.choice(list(car.car_types_list[self.brand].keys()))

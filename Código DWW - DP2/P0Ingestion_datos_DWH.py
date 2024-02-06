@@ -1,13 +1,14 @@
 import psycopg2
-import openpyxl
+from psycopg2.errors import UniqueViolation
+import random
 import pandas as pd
 from faker import Faker
 from math import radians,cos,sin,asin,sqrt
 from XX_Creacion_de_clases import car,driver,customer
 
 #REGISTROS A CREAR:
-numero_registros_coches_y_conductores = 1
-numero_clientes = 40
+numero_registros_coches_y_conductores = 43
+numero_clientes = 160
 
 #IMPORTANTE!! Como un conductor solo puede tener un coche, el número de registros a crear de coches y conductores tiene que ser el mismo
 def insert_cars_data():
@@ -21,16 +22,36 @@ def insert_cars_data():
     cur = conn.cursor()
     num_records_to_generate = numero_registros_coches_y_conductores
     for _ in range(num_records_to_generate):
-        car_instance = car()
-        cur.execute("""
-            INSERT INTO cars (id_driver, brand, model, car_seats, dissability_readyness)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (car_instance.driver_id, car_instance.brand, car_instance.model, car_instance.seats, car_instance.dissability_readyness))
+        inserted = False
+        while not inserted:
+            try:
+                # Actualizar y obtener la lista de id_driver disponibles en cada intento
+                cur.execute("SELECT id_driver FROM drivers WHERE id_driver NOT IN (SELECT id_driver FROM cars)")
+                available_driver_ids = [row[0] for row in cur.fetchall()]
 
-    conn.commit()
+                if not available_driver_ids:
+                    print("No hay más IDs de conductores disponibles.")
+                    break  # Salir del bucle si no hay IDs disponibles
+
+                selected_driver_id = random.choice(available_driver_ids)
+                
+                # Crear instancia de car sin asignar id_driver en __init__
+                car_instance = car(skip_driver_id_assignment=True)  # Asume una modificación en __init__ para permitir esto
+                
+                # Insertar utilizando el id_driver seleccionado
+                cur.execute("""
+                    INSERT INTO cars (id_driver, brand, model, car_seats, dissability_readyness)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (selected_driver_id, car_instance.brand, car_instance.model, car_instance.seats, car_instance.dissability_readyness))
+                conn.commit()
+                inserted = True
+            except UniqueViolation as e:
+                print("Intento de inserción con id_driver duplicado. Reintentando...")
+                conn.rollback()  # Hacer rollback en caso de violación única y reintentar
+
     cur.close()
     conn.close()
-    print ('Se han cargado datos de coches con éxito')
+    print('Se han cargado datos de coches con éxito')
     
 def insert_drivers_data():
     conn = psycopg2.connect(
@@ -178,5 +199,6 @@ def insert_all_data():
     insert_routes(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo.xlsx')
     insert_checkpoint(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo.xlsx')
 
-insert_checkpoint(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo.xlsx')
+insert_routes(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo_2.xlsx')
+insert_checkpoint(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo_2.xlsx')
 print ("Todos los datos se han generado bien")

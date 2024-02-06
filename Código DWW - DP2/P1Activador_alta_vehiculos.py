@@ -30,6 +30,7 @@ def generate_vehicle_activations():
         """)
         
         if id_driver and id_route:
+            now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             # CAMBIO DE ESTADO A ACTIVO
             consulta_sql_update_driver = """
                 UPDATE drivers
@@ -60,11 +61,13 @@ def generate_vehicle_activations():
             # INSERTAMOS EL NUEVO REGISTRO
             consulta_sql_insert_active_vehicle = """
                 INSERT INTO active_vehicles (id_driver, id_route, time_start, time_end, current_position, seats_available, service_status, current_checkpoint)
-                VALUES (%s, %s, NOW(), NOW(), %s, %s, 'On route', '1')
+                VALUES (%s, %s, %s, %s, %s, %s, 'On route', '1')
             """
             parametros_insert_active_vehicle = (
                 id_driver[0][0], 
-                id_route[0][0], 
+                id_route[0][0],
+                now_str,
+                now_str,
                 current_position[0][0] if current_position else None,  # Asegúrate de manejar correctamente si current_position está vacío
                 seats_available[0][0] if seats_available else 0,  # Asumiendo un valor por defecto si no se encuentra
             )
@@ -75,6 +78,6 @@ def generate_vehicle_activations():
             print ("No quedan coches inactivos, todos los coches están activos")
             db.cerrar()
         
-        time.sleep(30)
+        time.sleep(20)
 
-generate_vehicle_activations()
+generate_vehicle_activations()  
