@@ -3,10 +3,37 @@ import numpy as np
 import psycopg2
 from faker import Faker
 from ZZ_Auxiliar import car_types_list
-from getpass import getpass
+from google.cloud import secretmanager
+def access_secret_version(project_id, secret_id, version_id="latest"):
+    """
+    Accede a una versión de un secreto en Secret Manager.
 
-# Autenticación inicial: gcloud auth application-default login
-password = getpass("Introduce la contraseña: ")
+    Args:
+        project_id: ID de tu proyecto de GCP.
+        secret_id: ID del secreto que quieres acceder.
+        version_id: La versión del secreto; por defecto es "latest".
+
+    Returns:
+        El valor del secreto como una cadena.
+    """
+    # Crear el cliente de Secret Manager
+    client = secretmanager.SecretManagerServiceClient()
+
+    # Construir el nombre del recurso secreto
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+
+    # Acceder al secreto
+    response = client.access_secret_version(name=name)
+
+    # Retornar el payload del secreto como una cadena
+    return response.payload.data.decode("UTF-8")
+
+# Ejemplo de uso
+project_id = "edem_dp2"
+secret_id = "BBDD_Password"
+password = access_secret_version(project_id, secret_id)
+
+
 class car:
     car_types_list = car_types_list
     used_driver_ids = []
