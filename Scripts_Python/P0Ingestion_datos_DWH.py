@@ -1,43 +1,68 @@
 import psycopg2
-import openpyxl
+from psycopg2.errors import UniqueViolation
+import random
 import pandas as pd
 from faker import Faker
 from math import radians,cos,sin,asin,sqrt
-from DP2_Creacion_de_clases import car, driver, customer
+from XX_Creacion_de_clases import car,driver,customer
+
+#REGISTROS A CREAR:
+numero_registros_coches_y_conductores = 43
+numero_clientes = 160
 
 #IMPORTANTE!! Como un conductor solo puede tener un coche, el número de registros a crear de coches y conductores tiene que ser el mismo
 def insert_cars_data():
     conn = psycopg2.connect(
-        dbname = "DB_DP2",
-        user = "dp2",
-        password = "dp2",
-        host = "localhost", #Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
+        dbname = "DP2",
+        user = "postgres",
+        password = "1234",
+        host = "34.38.87.73", #Datos de conexión cambiados para postgress en local sin docker.
         port = "5432"
     )
     cur = conn.cursor()
-    num_records_to_generate = 40
+    num_records_to_generate = numero_registros_coches_y_conductores
     for _ in range(num_records_to_generate):
-        car_instance = car()
-        cur.execute("""
-            INSERT INTO cars (id_driver, brand, model, car_seats, dissability_readyness)
-            VALUES (%s, %s, %s, %s, %s)
-        """, (car_instance.driver_id, car_instance.brand, car_instance.model, car_instance.seats, car_instance.dissability_readyness))
+        inserted = False
+        while not inserted:
+            try:
+                # Actualizar y obtener la lista de id_driver disponibles en cada intento
+                cur.execute("SELECT id_driver FROM drivers WHERE id_driver NOT IN (SELECT id_driver FROM cars)")
+                available_driver_ids = [row[0] for row in cur.fetchall()]
 
-    conn.commit()
+                if not available_driver_ids:
+                    print("No hay más IDs de conductores disponibles.")
+                    break  # Salir del bucle si no hay IDs disponibles
+
+                selected_driver_id = random.choice(available_driver_ids)
+                
+                # Crear instancia de car sin asignar id_driver en __init__
+                car_instance = car(skip_driver_id_assignment=True)  # Asume una modificación en __init__ para permitir esto
+                
+                # Insertar utilizando el id_driver seleccionado
+                cur.execute("""
+                    INSERT INTO cars (id_driver, brand, model, car_seats, dissability_readyness)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (selected_driver_id, car_instance.brand, car_instance.model, car_instance.seats, car_instance.dissability_readyness))
+                conn.commit()
+                inserted = True
+            except UniqueViolation as e:
+                print("Intento de inserción con id_driver duplicado. Reintentando...")
+                conn.rollback()  # Hacer rollback en caso de violación única y reintentar
+
     cur.close()
     conn.close()
-    print ('Se han cargado datos de coches con éxito')
+    print('Se han cargado datos de coches con éxito')
     
 def insert_drivers_data():
     conn = psycopg2.connect(
-        dbname = "DB_DP2",
-        user = "dp2",
-        password = "dp2",
-        host = "localhost", # Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
+        dbname = "DP2",
+        user = "postgres",
+        password = "1234",
+        host = "34.38.87.73", #Datos de conexión cambiados para postgress en local sin docker.
         port = "5432"
     )
     cur = conn.cursor()
-    num_records_to_generate = 40
+    num_records_to_generate = numero_registros_coches_y_conductores
     for _ in range(num_records_to_generate):
         driver_instance = driver()
         cur.execute("""
@@ -51,14 +76,14 @@ def insert_drivers_data():
 
 def insert_customers_data():
     conn = psycopg2.connect(
-        dbname = "DB_DP2",
-        user = "dp2",
-        password = "dp2",
-        host = "localhost", #Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
+        dbname = "DP2",
+        user = "postgres",
+        password = "1234",
+        host = "34.38.87.73", #Datos de conexión cambiados para postgress en local sin docker.
         port = "5432"
     )
     cur = conn.cursor()
-    num_records_to_generate = 200
+    num_records_to_generate = numero_clientes
     for _ in range(num_records_to_generate):
         customer_instance = customer()
         cur.execute("""
@@ -72,11 +97,11 @@ def insert_customers_data():
 
 def insert_routes(excel_file):
     conn = psycopg2.connect(
-        dbname="DB_DP2",
-        user="dp2",
-        password="dp2",
-        host="localhost",
-        port="5432"
+        dbname = "DP2",
+        user = "postgres",
+        password = "1234",
+        host = "34.38.87.73", #Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
+        port = "5432"
     )
     cur = conn.cursor()
     df = pd.read_excel(excel_file)
@@ -129,10 +154,10 @@ def insert_checkpoint(excel_file):
         cur.close()
 
     conn = psycopg2.connect(
-        dbname = "DB_DP2",
-        user = "dp2",
-        password = "dp2",
-        host = "localhost", #Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
+        dbname = "DP2",
+        user = "postgres",
+        password = "1234",
+        host = "34.38.87.73", #Recuerda cambiar esto si lo dockerizas. Tendría que ser el nombre del contenedor "postgres"
         port = "5432"
     )
     cur = conn.cursor()
@@ -167,11 +192,13 @@ def insert_checkpoint(excel_file):
     conn.close()
     print("Se han cargado datos de checkpoint de rutas con éxito.")
 
-#IMPORTANTE, PARA RESPETAR LAS RELACIONS DE TABLA SE DEBEN CREAR EN ESTE ORDEN
-insert_drivers_data()
-insert_cars_data()
-insert_customers_data()
-insert_routes(r'G:\Mi unidad\PYTHON\DP2\Otros\Maestro_Rutas.xlsx')
-insert_checkpoint(r'G:\Mi unidad\PYTHON\DP2\Otros\Maestro_Rutas.xlsx')
+def insert_all_data():
+    insert_drivers_data()
+    insert_cars_data()
+    insert_customers_data()
+    insert_routes(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo.xlsx')
+    insert_checkpoint(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo.xlsx')
 
+insert_routes(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo_2.xlsx')
+insert_checkpoint(r'G:\Mi unidad\PYTHON\DP21\Maestro_Rutas_definitivo_2.xlsx')
 print ("Todos los datos se han generado bien")

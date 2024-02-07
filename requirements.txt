@@ -1,7 +1,0 @@
-psycopg2
-pandas
-numpy
-faker
-openpyxl
-pyspark
-flask
