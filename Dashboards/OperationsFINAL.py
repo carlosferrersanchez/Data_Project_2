@@ -59,7 +59,7 @@ body {
 blue = "<style>div.stDivider.horizontal {border: 2px solid #04b194;}</style>"
 
 # Logo en la barra lateral
-st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Front_End/Pruebas/Final/LOGO.png', use_column_width=True)
+st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Dashboards/LOGO.png', use_column_width=True)
 
 # Resto de tu aplicación Streamlit
 st.title('City Operations Dashboard')
