@@ -92,6 +92,8 @@ Por último, hemos querido representar los datos en un Mapa de Valencia con info
 
 Nos sirve para tener la información de nuestros usuarios, información útil a nivel Operacional y tener trazabilidad de los viajes.
 
+Aquí podemos dejar un ejemplo del Mapa en un momento puntual:
+
 ![Map](/images/Map.png)
 
 
@@ -100,3 +102,4 @@ Podemos ver:
 - Clientes en cola y vehículos con pasajeros.
 - Rating Medio de los viajes, su sentimiento sobre el uso de la plataforma.
   
+Gracias a esto podemos observar como se encuentran los usuarios de nuestra aplicación y ver donde se encuentran en cada momento.
