@@ -90,5 +90,13 @@ Cabe destacar que se genera un ID para el MATCH único, ya que cada cliente **so
 
 Por último, hemos querido representar los datos en un Mapa de Valencia con información completa y en tiempo real.
 
-Gracias a Streamlit, podemos representar dónde se encuentran nuestros usuarios, tanto los que tienen coincidencias y matcheos como los que no. Podemos encontrar información también separada y ver diferentes indicadores, ya sea rating como precio medio generado de los drivers.
+Nos sirve para tener la información de nuestros usuarios, información útil a nivel Operacional y tener trazabilidad de los viajes.
 
+![Map](/images/Map.png)
+
+
+Podemos ver: 
+- Clientes y vehículos activos.
+- Clientes en cola y vehículos con pasajeros.
+- Rating Medio de los viajes, su sentimiento sobre el uso de la plataforma.
+  
