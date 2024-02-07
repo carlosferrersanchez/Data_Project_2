@@ -5,7 +5,6 @@ import re
 import time
 import streamlit_shadcn_ui as ui
 import time
-from getpass import getpass
 
 # Clase para manejar la base de datos
 class BaseDeDatos:
@@ -13,7 +12,7 @@ class BaseDeDatos:
     HOST = '34.38.87.73'
     DATABASE = 'DP2'
     USER = 'postgres'
-    PASSWORD = getpass("Introduce la contraseña de la base de datos: ")
+    PASSWORD = '1234'
     PORT = '5432'
 
     @staticmethod
@@ -70,7 +69,7 @@ body {
 blue = "<style>div.stDivider.horizontal {border: 2px solid #04b194;}</style>"
 
 # Logo en la barra lateral
-st.sidebar.image('/Users/paulglobal/Documents/GitHub/Data_Project_2/Dashboards/LOGO.png', use_column_width=True)
+st.sidebar.image('LOGO.png', use_column_width=True)
 
 # Resto de tu aplicación Streamlit
 st.title('Client Distribution Dashboard')
